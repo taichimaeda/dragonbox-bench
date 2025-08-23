@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"encoding/csv"
 	"math"
 	"math/rand"
@@ -10,10 +11,10 @@ import (
 )
 
 func main() {
-	benchFtoaRandomBits(1000000, 1000, 64, "random_bits64.csv")
-	benchFtoaRandomDigits(100000, 1000, 64, "random_digits64.csv")
-	benchFtoaRandomBits(1000000, 1000, 32, "random_bits32.csv")
-	benchFtoaRandomDigits(100000, 1000, 32, "random_digits32.csv")
+	benchFtoaRandomBits(100000, 1000, 64, "random_bits64.csv")
+	benchFtoaRandomDigits(10000, 1000, 64, "random_digits64.csv")
+	benchFtoaRandomBits(100000, 1000, 32, "random_bits32.csv")
+	benchFtoaRandomDigits(10000, 1000, 32, "random_digits32.csv")
 }
 
 func benchFtoaRandomBits(samples, iter, bitSize int, csvFile string) error {
@@ -23,10 +24,12 @@ func benchFtoaRandomBits(samples, iter, bitSize int, csvFile string) error {
 	}
 	defer f.Close()
 
-	w := csv.NewWriter(f)
-	defer w.Flush()
+	buffer := bufio.NewWriter(f)
+	writer := csv.NewWriter(buffer)
+	defer buffer.Flush()
+	defer writer.Flush()
 
-	w.Write([]string{"bits", "dragonbox_ns", "ryu_ns"})
+	writer.Write([]string{"bits", "dragonbox_ns", "ryu_ns"})
 
 	for range samples {
 		var bits uint64
@@ -50,7 +53,7 @@ func benchFtoaRandomBits(samples, iter, bitSize int, csvFile string) error {
 		mean1 := float64(total1.Nanoseconds()) / float64(iter)
 		mean2 := float64(total2.Nanoseconds()) / float64(iter)
 
-		w.Write([]string{
+		writer.Write([]string{
 			strconv.FormatUint(bits, 10),
 			strconv.FormatFloat(mean1, 'e', -1, 64),
 			strconv.FormatFloat(mean2, 'e', -1, 64),
@@ -67,10 +70,12 @@ func benchFtoaRandomDigits(samples, iter int, bitSize int, csvFile string) error
 	}
 	defer f.Close()
 
-	w := csv.NewWriter(f)
-	defer w.Flush()
+	buffer := bufio.NewWriter(f)
+	writer := csv.NewWriter(buffer)
+	defer buffer.Flush()
+	defer writer.Flush()
 
-	w.Write([]string{"digits", "dragonbox_ns", "ryu_ns"})
+	writer.Write([]string{"digits", "dragonbox_ns", "ryu_ns"})
 
 	for n := 1; n <= 17; n++ {
 		for range samples {
@@ -96,7 +101,7 @@ func benchFtoaRandomDigits(samples, iter int, bitSize int, csvFile string) error
 			mean1 := float64(total1.Nanoseconds()) / float64(iter)
 			mean2 := float64(total2.Nanoseconds()) / float64(iter)
 
-			w.Write([]string{
+			writer.Write([]string{
 				strconv.FormatInt(int64(n), 10),
 				strconv.FormatFloat(mean1, 'e', -1, 64),
 				strconv.FormatFloat(mean2, 'e', -1, 64),

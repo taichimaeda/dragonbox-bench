@@ -1,18 +1,39 @@
-import matplotlib.pyplot as plt
+import sys
+
 import pandas as pd
+import plotly.express as px
 
-df = pd.read_csv("random_bits32.csv")
-df = df[:1000]
+for bit_size in [32, 64]:
+    csv_file = f"random_bits{bit_size}.csv" 
+    output_file = f"random_bits{bit_size}.png"
 
-plt.figure(figsize=(8, 6))
-plt.scatter(df["bits"], df["dragonbox_ns"], label="Dragonbox", s=1, alpha=0.7)
-plt.scatter(df["bits"], df["ryu_ns"], label="Ryu", s=1, alpha=0.7)
+    df = pd.read_csv(csv_file)
+    fig = px.scatter(
+        df,
+        x="bits",
+        y=["dragonbox_ns", "ryu_ns"],
+        labels={"value": "Time (ns)", "bits": "Bit Patterns"},
+        title="Dragonbox vs Ryu Performance"
+    )
 
-plt.xlabel("Bits")
-plt.ylabel("Time (ns)")
-plt.title("Dragonbox vs Ryu Performance")
-plt.legend()
-plt.grid(True)
+    fig.update_traces(marker=dict(size=1, opacity=0.5))
+    fig.update_yaxes(range=[0, 100])
+    fig.write_image(output_file, width=1200, height=675)
 
-plt.ylim(0, 100)
-plt.show()
+for bit_size in [32, 64]:
+    csv_file = f"random_digits{bit_size}.csv" 
+    output_file = f"random_digits{bit_size}.png"
+
+    df = pd.read_csv(csv_file)
+    df = df.groupby("digits").mean().reset_index()
+    fig = px.line(
+        df,
+        x="digits",
+        y=["dragonbox_ns", "ryu_ns"],
+        labels={"value": "Time (ns)", "digits": "Number of Digits"},
+        title="Dragonbox vs Ryu Performance"
+    )
+
+    fig.update_traces(line=dict(width=2))
+    fig.update_yaxes(range=[0, 100])
+    fig.write_image(output_file, width=1200, height=675)
