@@ -53,9 +53,15 @@ for bit_size in [32, 64]:
         xaxis_title="Bit Patterns",
         yaxis_title="Time (ns)",
         legend=dict(itemsizing="constant"),
-        yaxis=dict(range=[30, 70])
+        yaxis=dict(range=[30, 70]),
+        xaxis=dict(
+            range=[0, 2**bit_size],
+            tickvals=[i*2**(bit_size-2) for i in range(1, 4+1)],
+            ticktext=[f"{i}×2<sup>{bit_size-2}</sup>" for i in range(1, 4+1)],
+        )
     )
     fig.write_image(output_file, width=1200, height=675)
+
 
 for bit_size in [32, 64]:
     csv_file = f"random_digits{bit_size}.csv"
@@ -124,6 +130,7 @@ for bit_size in [32, 64]:
         xaxis_title="Number of Digits",
         yaxis_title="Time (ns)",
         legend=dict(itemsizing="constant"),
-        yaxis=dict(range=[30, 70])
+        yaxis=dict(range=[30, 70]),
+        xaxis=dict(range=[1, 17]),
     )
     fig.write_image(output_file, width=1200, height=675)
