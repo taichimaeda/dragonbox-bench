@@ -17,7 +17,7 @@ for bit_size in [32, 64]:
     )
 
     fig.update_traces(marker=dict(size=1, opacity=0.5))
-    fig.update_yaxes(range=[0, 100])
+    fig.update_yaxes(range=[30, 70])
     fig.write_image(output_file, width=1200, height=675)
 
 for bit_size in [32, 64]:
@@ -35,5 +35,5 @@ for bit_size in [32, 64]:
     )
 
     fig.update_traces(line=dict(width=2))
-    fig.update_yaxes(range=[0, 100])
+    fig.update_yaxes(range=[30, 70])
     fig.write_image(output_file, width=1200, height=675)
