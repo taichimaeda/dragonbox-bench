@@ -9,10 +9,10 @@ import (
 )
 
 func main() {
-	profileFtoaRandomBits(1000000, 64, "random_bits64.pprof")
-	profileFtoaRandomDigits(1000000, 64, "random_digits64.pprof")
-	profileFtoaRandomBits(1000000, 32, "random_bits32.pprof")
-	profileFtoaRandomDigits(1000000, 32, "random_digits32.pprof")
+	profileFtoaRandomBits(100000000, 64, "random_bits64.pprof")
+	profileFtoaRandomDigits(10000000, 64, "random_digits64.pprof")
+	profileFtoaRandomBits(100000000, 32, "random_bits32.pprof")
+	profileFtoaRandomDigits(10000000, 32, "random_digits32.pprof")
 }
 
 type testdata struct {
@@ -77,9 +77,6 @@ func profileFtoaRandomDigits(samples, bitSize int, profFile string) {
 	defer pprof.StopCPUProfile()
 
 	for _, tt := range tests {
-		if !(tt.bitSize == 32 || tt.bitSize == 64) {
-			panic("bitsize is illegal" + strconv.FormatInt(int64(tt.bitSize), 10))
-		}
 		strconv.ProfileDragonboxFtoa(tt.val, tt.bitSize)
 		strconv.ProfileRyuFtoaShortest(tt.val, tt.bitSize)
 	}
